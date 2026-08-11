@@ -37,7 +37,7 @@ $(TARGET).dol: $(TARGET).elf
 
 $(TARGET).elf: $(addprefix $(BUILD)/,$(OFILES))
 	@echo "linking $(notdir $@)"
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBPATHS) $(LIBS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBPATHS) $(LIBS)
 
 $(BUILD)/%.o: %.c | $(BUILD)
 	@echo "compiling $<"
