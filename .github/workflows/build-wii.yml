@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # devkitpro/devkitppc already includes libogc and Wii libraries
     container: devkitpro/devkitppc:latest
 
     defaults:
@@ -19,9 +20,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install Wii libraries (libogc)
-        run: dkp-pacman -Syu wii-dev --noconfirm
 
       - name: Build boot.dol
         run: |
