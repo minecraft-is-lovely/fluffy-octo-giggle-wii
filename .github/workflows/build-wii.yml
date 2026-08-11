@@ -10,19 +10,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # devkitpro/wii includes devkitPPC compiler + libogc + Wii libraries
-    container: devkitpro/wii:latest
+    container: devkitpro/devkitppc:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Wii libraries (libogc)
+        run: dkp-pacman -Syu wii-dev --noconfirm
+
       - name: Build boot.dol
-        env:
-          DEVKITPRO: /opt/devkitpro
-          DEVKITPPC: /opt/devkitpro/devkitPPC
         run: |
-          export PATH=$DEVKITPPC/bin:$PATH
+          source /etc/profile.d/devkit-env.sh
           cd wii-homebrew
           make
 
