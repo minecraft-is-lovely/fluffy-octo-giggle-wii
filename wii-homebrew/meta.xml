@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <app version="1">
-    <name>Wii Calculator</name>
+    <name>WiiBox</name>
     <coder>Your Name</coder>
     <version>1.0</version>
     <release_date>20240101</release_date>
-    <short_description>Graphical calculator with Wiimote IR cursor</short_description>
+    <short_description>Physics sandbox — spawn and drag boxes!</short_description>
     <long_description>
-        A fully graphical calculator for the Wii.
-        Point the Wiimote at the screen and press A to tap buttons.
+        WiiBox is a physics sandbox for the Wii.
+        Point the Wiimote and press A to spawn boxes, watch them fall
+        with gravity and bounce off each other. Switch to Drag mode
+        to pick up and throw boxes around. Press CLEAR to reset.
         Press HOME to exit.
     </long_description>
 </app>
