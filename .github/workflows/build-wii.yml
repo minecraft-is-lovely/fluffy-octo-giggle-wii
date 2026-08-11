@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     container: devkitpro/devkitppc:latest
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
