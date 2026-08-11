@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <app version="1">
-    <name>WiiBox</name>
+    <name>CubiisOnline</name>
     <coder>Your Name</coder>
     <version>1.0</version>
-    <release_date>20240101</release_date>
-    <short_description>Physics sandbox — spawn and drag boxes!</short_description>
+    <release_date>20260811</release_date>
+    <short_description>Online multiplayer cube platformer!</short_description>
     <long_description>
-        WiiBox is a physics sandbox for the Wii.
-        Point the Wiimote and press A to spawn boxes, watch them fall
-        with gravity and bounce off each other. Switch to Drag mode
-        to pick up and throw boxes around. Press CLEAR to reset.
-        Press HOME to exit.
+        CubiisOnline is a multiplayer platformer for the Wii.
+        Enter your name on the built-in keyboard, pick a colour,
+        choose one of 6 servers, then jump around with up to 8 players.
+        Run game-server.js on a PC on the same WiFi, enter its IP
+        in the app, and play together in real time.
+        D-Pad to move, A to jump, B to disconnect, HOME to quit.
     </long_description>
 </app>

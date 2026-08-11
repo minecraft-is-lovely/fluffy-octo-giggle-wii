@@ -30,7 +30,7 @@ jobs:
       - name: Upload boot.dol
         uses: actions/upload-artifact@v4
         with:
-          name: wiibox
+          name: cubiis-online
           path: |
             wii-homebrew/boot.dol
             wii-homebrew/boot.elf
