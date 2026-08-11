@@ -6,7 +6,7 @@ ifeq ($(strip $(DEVKITPRO)),)
 $(error "Set DEVKITPRO in your environment. export DEVKITPRO=/opt/devkitpro")
 endif
 
-include $(DEVKITPRO)/wii_rules
+include $(DEVKITPPC)/wii_rules
 
 #---------------------------------------------------------------------------------
 TARGET   := boot
