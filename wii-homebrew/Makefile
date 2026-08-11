@@ -1,16 +1,13 @@
 #---------------------------------------------------------------------------------
-# Wii Homebrew Makefile — works with devkitPro wii-dev toolchain
-# https://devkitpro.org
+# Wii Homebrew Makefile
+# Requires devkitPro with wii-dev: https://devkitpro.org
 #---------------------------------------------------------------------------------
 ifeq ($(strip $(DEVKITPRO)),)
 $(error "Set DEVKITPRO in your environment. export DEVKITPRO=/opt/devkitpro")
 endif
 
-# Wii-specific rules (compiler flags, elf2dol, etc.)
 include $(DEVKITPRO)/wii_rules
 
-#---------------------------------------------------------------------------------
-# Target / directories
 #---------------------------------------------------------------------------------
 TARGET   := boot
 BUILD    := build
@@ -18,56 +15,38 @@ SOURCES  := source
 INCLUDES := include
 
 #---------------------------------------------------------------------------------
-# Compiler flags
-#---------------------------------------------------------------------------------
-CFLAGS   := -g -O2 -Wall $(MACHDEP) $(INCLUDE)
-CXXFLAGS := $(CFLAGS)
-LDFLAGS  := -g $(MACHDEP) -Wl,-Map,$(notdir $@.map)
-
-#---------------------------------------------------------------------------------
-# Libraries  (-lwiiuse -lbte must come before -logc)
-#---------------------------------------------------------------------------------
-LIBS     := -lwiiuse -lbte -logc -lm
-
-#---------------------------------------------------------------------------------
-# Source files
-#---------------------------------------------------------------------------------
 CFILES   := $(foreach d,$(SOURCES),$(notdir $(wildcard $(d)/*.c)))
-CPPFILES := $(foreach d,$(SOURCES),$(notdir $(wildcard $(d)/*.cpp)))
-sFILES   := $(foreach d,$(SOURCES),$(notdir $(wildcard $(d)/*.s)))
-SFILES   := $(foreach d,$(SOURCES),$(notdir $(wildcard $(d)/*.S)))
+OFILES   := $(CFILES:.c=.o)
 
-ifeq ($(strip $(CPPFILES)),)
-  export LD := $(CC)
-else
-  export LD := $(CXX)
-endif
+CFLAGS   := -g -O2 -Wall $(MACHDEP) \
+             $(foreach d,$(INCLUDES),-iquote $(CURDIR)/$(d)) \
+             -I$(LIBOGC_INC)
+LDFLAGS  := -g $(MACHDEP) -Wl,-Map,$(TARGET).map
+LIBS     := -lwiiuse -lbte -logc -lm
+LIBPATHS := -L$(LIBOGC_LIB)
 
-export OFILES   := $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(sFILES:.s=.o) $(SFILES:.S=.o)
-export INCLUDE  := $(foreach d,$(INCLUDES),-iquote $(CURDIR)/$(d)) \
-                   $(foreach d,$(LIBDIRS),-I$(d)/include) \
-                   -I$(CURDIR)/$(BUILD) \
-                   -I$(LIBOGC_INC)
-export LIBPATHS := $(foreach d,$(LIBDIRS),-L$(d)/lib) -L$(LIBOGC_LIB)
+vpath %.c $(SOURCES)
 
 .PHONY: all clean
 
-all: $(BUILD)
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-
-$(BUILD):
-	@mkdir -p $@
-
-clean:
-	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).dol
-
-else
-#---------------------------------------------------------------------------------
-DEPENDS := $(OFILES:.o=.d)
+all: $(TARGET).dol
 
 $(TARGET).dol: $(TARGET).elf
-$(TARGET).elf: $(OFILES)
+	elf2dol $< $@
+	@echo "built $(notdir $@)"
 
--include $(DEPENDS)
-endif
+$(TARGET).elf: $(addprefix $(BUILD)/,$(OFILES))
+	@echo "linking $(notdir $@)"
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBPATHS) $(LIBS)
+
+$(BUILD)/%.o: %.c | $(BUILD)
+	@echo "compiling $<"
+	$(CC) -MMD -MP -MF $(BUILD)/$*.d $(CFLAGS) -c $< -o $@
+
+$(BUILD):
+	mkdir -p $@
+
+clean:
+	rm -rf $(BUILD) $(TARGET).elf $(TARGET).dol $(TARGET).map
+
+-include $(wildcard $(BUILD)/*.d)
