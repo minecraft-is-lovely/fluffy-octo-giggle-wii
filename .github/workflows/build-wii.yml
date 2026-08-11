@@ -1,0 +1,32 @@
+name: Build Wii Homebrew
+
+on:
+  push:
+    paths:
+      - "wii-homebrew/**"
+      - ".github/workflows/build-wii.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitppc:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build boot.dol
+        run: |
+          cd wii-homebrew
+          make
+
+      - name: Upload boot.dol
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-wii
+          path: |
+            wii-homebrew/boot.dol
+            wii-homebrew/boot.elf
+            wii-homebrew/meta.xml
+          if-no-files-found: error
