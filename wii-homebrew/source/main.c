@@ -322,6 +322,7 @@ static char plr_addr[64]=""; /* server IP:port  */
 static char plr_name[13]=""; /* display name    */
 static int  plr_color=0;     /* 0-8             */
 static int  plr_room =0;     /* 0-5             */
+static int  offline_mode=0;  /* skip server entirely */
 
 /* local player physics */
 static float px=300,py=420,pvx=0,pvy=0;
@@ -497,8 +498,8 @@ static void draw_kb(int cx,int cy,const char*input,const char*title,int blink){
 #define NGS  8
 
 static const char NP_CHARS[13]="789456123.0\b";
-static float NA[13];
-static int   NP2[13];
+static float NA[14];
+static int   NP2[14];
 
 static int np_hit(int cx,int cy){
     for(int r=0;r<4;r++)
@@ -508,6 +509,8 @@ static int np_hit(int cx,int cy){
         }
     /* OK: y=NY0+4*(NKH+NGS)+8=430, x=230 w=180 */
     if(cx>=230&&cx<410&&cy>=430&&cy<478) return 12;
+    /* PLAY OFFLINE button: sits between input box and numpad */
+    if(cx>=210&&cx<430&&cy>=116&&cy<150) return 13;
     return -1;
 }
 
@@ -534,6 +537,7 @@ static void draw_numpad(int cx,int cy,const char*input){
             BTN(kx,ky,NKW,NKH,lbl,2,a,55,58,70);
         }
     }
+    BTN(210,116,220,34,"PLAY OFFLINE",1,NA[13]-(NP2[13]/8.0f)*0.5f,100,50,150);
     BTN(230,430,180,44,"OK",2,NA[12]-(NP2[12]/8.0f)*0.5f,30,130,60);
 
     CURSOR(cx,cy);
@@ -671,7 +675,7 @@ static void anim_update(int cx,int cy){
         KA[i]+=(t-KA[i])*SP;
         if(KP[i]>0) KP[i]--;
     }
-    for(int i=0;i<13;i++){
+    for(int i=0;i<14;i++){
         float t=(i==nh)?1.0f:0.0f;
         NA[i]+=(t-NA[i])*SP;
         if(NP2[i]>0) NP2[i]--;
@@ -758,7 +762,10 @@ int main(int argc,char**argv){
             int nh=np_hit(cx,cy);
             if(ad && nh>=0){
                 NP2[nh]=8;
-                if(nh<12){
+                if(nh==13){ /* PLAY OFFLINE */
+                    offline_mode=1;
+                    state=S_NAME;
+                } else if(nh<12){
                     char ch=NP_CHARS[nh<10?nh:nh];
                     if(nh==10) ch='0';
                     if(nh==11){ /* backspace */
@@ -768,7 +775,7 @@ int main(int argc,char**argv){
                         char s2[2]={ch,0}; strcat(plr_addr,s2);
                     }
                 } else { /* OK */
-                    if(strlen(plr_addr)>0) state=S_NAME;
+                    if(strlen(plr_addr)>0){ offline_mode=0; state=S_NAME; }
                 }
             }
             /* BACK via B */
@@ -797,7 +804,8 @@ int main(int argc,char**argv){
             }
             /* confirm */
             if(ad && cx>=220&&cx<420&&cy>=360&&cy<410){
-                plr_color=sel_color; state=S_ROOMS;
+                plr_color=sel_color;
+                state=offline_mode?S_GAME:S_ROOMS;
             }
             /* back */
             if((ad&&cx>=570&&cx<635&&cy>=12&&cy<48)||(down&WPAD_BUTTON_B)) state=S_NAME;
@@ -822,19 +830,22 @@ int main(int argc,char**argv){
             break;}
 
         case S_CONNECTING:
-            draw_connecting(frame);
-            /* flip now so user sees "connecting..." */
-            VIDEO_SetNextFramebuffer(xfb[fbi]); VIDEO_Flush(); VIDEO_WaitVSync(); fbi^=1;
-            /* attempt blocking connect */
             px=300; py=420; pvx=0; pvy=0; pon=0;
             memset(REM,0,sizeof(REM));
             net_bufn=0;
-            if(net_ok && net_join(plr_addr,4001,plr_room,plr_name,plr_color)){
+            if(offline_mode){
                 err_msg[0]=0;
                 state=S_GAME;
             } else {
-                snprintf(err_msg,sizeof(err_msg),"%.60s",net_errmsg[0]?net_errmsg:"NETWORK UNAVAILABLE");
-                state=S_ROOMS;
+                draw_connecting(frame);
+                VIDEO_SetNextFramebuffer(xfb[fbi]); VIDEO_Flush(); VIDEO_WaitVSync(); fbi^=1;
+                if(net_ok && net_join(plr_addr,4001,plr_room,plr_name,plr_color)){
+                    err_msg[0]=0;
+                    state=S_GAME;
+                } else {
+                    snprintf(err_msg,sizeof(err_msg),"%.60s",net_errmsg[0]?net_errmsg:"NETWORK UNAVAILABLE");
+                    state=S_ROOMS;
+                }
             }
             break;
 
@@ -845,9 +856,9 @@ int main(int argc,char**argv){
             /* also try home to disconnect */
             if(down&WPAD_BUTTON_B){
                 if(net_conn){ ns("QUIT\n"); }
-                if(net_sock>=0){ net_close(net_sock); net_sock=-1; net_sock=-1; }
+                if(net_sock>=0){ net_close(net_sock); net_sock=-1; }
                 net_conn=0;
-                state=S_ROOMS;
+                state=offline_mode?S_TITLE:S_ROOMS;
                 break;
             }
             phys(left,right,jump);
