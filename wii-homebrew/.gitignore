@@ -1,0 +1,13 @@
+# Build output
+build/
+boot.elf
+boot.dol
+*.map
+
+# OS / editor artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/

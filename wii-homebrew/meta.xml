@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="1">
+    <name>Hello Wii</name>
+    <coder>Your Name</coder>
+    <version>1.0</version>
+    <release_date>20240101</release_date>
+    <short_description>Hello from my Wii!</short_description>
+    <long_description>
+        A basic Wii Homebrew demo that displays a greeting on screen.
+        Built with devkitPPC and libogc.
+        Press HOME to exit.
+    </long_description>
+</app>
