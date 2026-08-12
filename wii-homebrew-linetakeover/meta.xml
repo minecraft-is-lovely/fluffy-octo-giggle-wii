@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="1">
+  <name>Line Takeover</name>
+  <coder>LineTakeover</coder>
+  <version>1.0</version>
+  <release_date>20260812</release_date>
+  <short_description>Puts scrolling black stripes over everything on screen</short_description>
+  <long_description>Draws scrolling black horizontal lines over the entire Wii display. Effect is purely in memory — press HOME to return to the Wii Menu and the stripes disappear instantly. Nothing is written to NAND.</long_description>
+</app>
