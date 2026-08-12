@@ -6,6 +6,7 @@ on:
       - "wii-homebrew/**"
       - "wii-homebrew-scratchii/**"
       - "wii-homebrew-flipnote/**"
+      - "wii-homebrew-atakeover/**"
       - "scripts/make_wad.py"
       - ".github/workflows/build-wii.yml"
   workflow_dispatch:
@@ -102,4 +103,35 @@ jobs:
             wii-homebrew-flipnote/boot.elf
             wii-homebrew-flipnote/meta.xml
             wii-homebrew-flipnote/FlipnoteStudio.wad
+          if-no-files-found: error
+
+  build-atakeover:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitppc:latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build A Takeover
+        run: |
+          source /etc/profile.d/devkit-env.sh
+          cd wii-homebrew-atakeover
+          make
+
+      - name: Pack WAD
+        run: |
+          python3 scripts/make_wad.py ATKO "A Takeover" wii-homebrew-atakeover/boot.dol wii-homebrew-atakeover/ATakeover.wad
+
+      - name: Upload A Takeover
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-takeover
+          path: |
+            wii-homebrew-atakeover/boot.dol
+            wii-homebrew-atakeover/boot.elf
+            wii-homebrew-atakeover/meta.xml
+            wii-homebrew-atakeover/ATakeover.wad
           if-no-files-found: error

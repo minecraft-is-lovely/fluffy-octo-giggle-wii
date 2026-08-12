@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="1">
+  <name>A Takeover</name>
+  <coder>ATakeover</coder>
+  <version>1.0</version>
+  <release_date>20260812</release_date>
+  <short_description>Replaces all Wii system text with the letter A</short_description>
+  <long_description>Patches every glyph in every Wii NAND font file to look like the letter A. After running and rebooting to the Wii Menu, all system text will be rendered as A. WARNING: modifies NAND — reset Dolphin NAND or use BootMii to restore on a real Wii.</long_description>
+</app>
