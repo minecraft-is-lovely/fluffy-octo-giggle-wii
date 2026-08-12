@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="1">
+    <name>Scratchii</name>
+    <coder>Your Name</coder>
+    <version>1.0</version>
+    <release_date>20260812</release_date>
+    <short_description>Block programming on the Wii!</short_description>
+    <long_description>
+        Scratchii is a Scratch-like block programming environment for the Wii.
+        Point the Wiimote, press A to click blocks, build a script and press
+        the green flag to run it. Draw costumes in the costume editor.
+        Blocks: Events, Motion, Looks, Control. HOME to quit.
+    </long_description>
+</app>
