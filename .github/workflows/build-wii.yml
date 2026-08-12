@@ -6,6 +6,7 @@ on:
       - "wii-homebrew/**"
       - "wii-homebrew-scratchii/**"
       - "wii-homebrew-flipnote/**"
+      - "scripts/make_wad.py"
       - ".github/workflows/build-wii.yml"
   workflow_dispatch:
 
@@ -26,6 +27,10 @@ jobs:
           cd wii-homebrew
           make
 
+      - name: Pack WAD
+        run: |
+          python3 scripts/make_wad.py CUBO "CubiisOnline" wii-homebrew/boot.dol wii-homebrew/CubiisOnline.wad
+
       - name: Upload CubiisOnline
         uses: actions/upload-artifact@v4
         with:
@@ -34,6 +39,7 @@ jobs:
             wii-homebrew/boot.dol
             wii-homebrew/boot.elf
             wii-homebrew/meta.xml
+            wii-homebrew/CubiisOnline.wad
           if-no-files-found: error
 
   build-scratchii:
@@ -52,6 +58,10 @@ jobs:
           cd wii-homebrew-scratchii
           make
 
+      - name: Pack WAD
+        run: |
+          python3 scripts/make_wad.py SCRA "Scratchii" wii-homebrew-scratchii/boot.dol wii-homebrew-scratchii/Scratchii.wad
+
       - name: Upload Scratchii
         uses: actions/upload-artifact@v4
         with:
@@ -60,6 +70,7 @@ jobs:
             wii-homebrew-scratchii/boot.dol
             wii-homebrew-scratchii/boot.elf
             wii-homebrew-scratchii/meta.xml
+            wii-homebrew-scratchii/Scratchii.wad
           if-no-files-found: error
 
   build-flipnote:
@@ -78,6 +89,10 @@ jobs:
           cd wii-homebrew-flipnote
           make
 
+      - name: Pack WAD
+        run: |
+          python3 scripts/make_wad.py FLIP "Flipnote Studio Wii" wii-homebrew-flipnote/boot.dol wii-homebrew-flipnote/FlipnoteStudio.wad
+
       - name: Upload Flipnote Studio Wii
         uses: actions/upload-artifact@v4
         with:
@@ -86,4 +101,5 @@ jobs:
             wii-homebrew-flipnote/boot.dol
             wii-homebrew-flipnote/boot.elf
             wii-homebrew-flipnote/meta.xml
+            wii-homebrew-flipnote/FlipnoteStudio.wad
           if-no-files-found: error
