@@ -400,19 +400,6 @@ static void draw_canvas_area(void){
     }
 }
 
-/* Draw the ghost of the previous frame (onion skin) as light grey */
-static void draw_onion(void){
-    if(cur_frame==0) return;
-    int pf=cur_frame-1;
-    for(int cy2=0;cy2<CANVAS_H;cy2++){
-        const u8*row=frames[pf][cy2];
-        for(int cx2=0;cx2<CANVAS_W;cx2++){
-            if(row[cx2]!=0){
-                R(CV_X+cx2*SCALE,CV_Y+cy2*SCALE,SCALE,SCALE,180,180,200);
-            }
-        }
-    }
-}
 
 /* Thumbnail of frame fi into screen rect (x,y,w,h) */
 static void draw_thumb(int fi,int x,int y,int w,int h){
@@ -689,7 +676,7 @@ int main(int argc,char**argv){
         R(0,0,SW,SH,15,17,25);
 
         draw_canvas_area();
-        if(!playing) draw_onion();
+        
         if(!playing) draw_brush_cursor(scx,scy);
         draw_topbar(scx,scy);
         draw_viewer(scx,scy);
