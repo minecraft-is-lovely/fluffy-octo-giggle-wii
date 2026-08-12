@@ -5,6 +5,7 @@ on:
     paths:
       - "wii-homebrew/**"
       - "wii-homebrew-scratchii/**"
+      - "wii-homebrew-flipnote/**"
       - ".github/workflows/build-wii.yml"
   workflow_dispatch:
 
@@ -59,4 +60,30 @@ jobs:
             wii-homebrew-scratchii/boot.dol
             wii-homebrew-scratchii/boot.elf
             wii-homebrew-scratchii/meta.xml
+          if-no-files-found: error
+
+  build-flipnote:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitppc:latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Flipnote Studio Wii
+        run: |
+          source /etc/profile.d/devkit-env.sh
+          cd wii-homebrew-flipnote
+          make
+
+      - name: Upload Flipnote Studio Wii
+        uses: actions/upload-artifact@v4
+        with:
+          name: flipnote-studio-wii
+          path: |
+            wii-homebrew-flipnote/boot.dol
+            wii-homebrew-flipnote/boot.elf
+            wii-homebrew-flipnote/meta.xml
           if-no-files-found: error
