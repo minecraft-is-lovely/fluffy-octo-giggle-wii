@@ -22,7 +22,7 @@ CFLAGS   := -g -O2 -Wall $(MACHDEP) \
              $(foreach d,$(INCLUDES),-iquote $(CURDIR)/$(d)) \
              -I$(LIBOGC_INC)
 LDFLAGS  := -g $(MACHDEP) -Wl,-Map,$(TARGET).map
-LIBS     := -lwiiuse -lbte -logc -lfat -lm
+LIBS     := -lwiiuse -lbte -lfat -logc -lm
 LIBPATHS := -L$(LIBOGC_LIB)
 
 vpath %.c $(SOURCES)
